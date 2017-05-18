@@ -1,0 +1,37 @@
+SELECT
+p.ID AS order_id,
+p.post_date AS order_date,
+p.post_status AS order_status,
+MAX( CASE WHEN pm.meta_key = '_billing_email' AND p.ID = pm.post_id THEN pm.meta_value END ) AS billing_email,
+MAX( CASE WHEN pm.meta_key = '_billing_first_name' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _billing_first_name,
+MAX( CASE WHEN pm.meta_key = '_billing_lASt_name' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _billing_lASt_name,
+MAX( CASE WHEN pm.meta_key = '_billing_address_1' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _billing_address_1,
+MAX( CASE WHEN pm.meta_key = '_billing_address_2' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _billing_address_2,
+MAX( CASE WHEN pm.meta_key = '_billing_city' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _billing_city,
+MAX( CASE WHEN pm.meta_key = '_billing_state' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _billing_state,
+MAX( CASE WHEN pm.meta_key = '_billing_postcode' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _billing_postcode,
+MAX( CASE WHEN pm.meta_key = '_shipping_first_name' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _shipping_first_name,
+MAX( CASE WHEN pm.meta_key = '_shipping_lASt_name' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _shipping_lASt_name,
+MAX( CASE WHEN pm.meta_key = '_shipping_address_1' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _shipping_address_1,
+MAX( CASE WHEN pm.meta_key = '_shipping_address_2' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _shipping_address_2,
+MAX( CASE WHEN pm.meta_key = '_shipping_city' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _shipping_city,
+MAX( CASE WHEN pm.meta_key = '_shipping_state' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _shipping_state,
+MAX( CASE WHEN pm.meta_key = '_shipping_postcode' AND p.ID = pm.post_id THEN pm.meta_value END ) AS _shipping_postcode,
+MAX( CASE WHEN pm.meta_key = '_cart_discount' AND p.ID = pm.post_id THEN pm.meta_value END ) AS order_discount,
+MAX( CASE WHEN pm.meta_key = '_order_shipping' AND p.ID = pm.post_id THEN pm.meta_value END ) AS order_shipping,
+MAX( CASE WHEN pm.meta_key = '_order_total' AND p.ID = pm.post_id THEN pm.meta_value END ) AS order_total,
+MAX( CASE WHEN pm.meta_key = '_order_tax' AND p.ID = pm.post_id THEN pm.meta_value END ) AS order_tax,
+MAX( CASE WHEN pm.meta_key = '_paid_date' AND p.ID = pm.post_id THEN pm.meta_value END ) AS paid_date,
+( 
+	SELECT GROUP_CONCAT( order_item_name separator '|' ) FROM wp_squi_woocommerce_order_items WHERE order_id = p.ID 
+) AS order_items
+FROM
+wp_squi_posts AS p,
+wp_squi_postmeta AS pm
+WHERE
+post_type = 'shop_order' AND
+p.ID = pm.post_id AND
+post_date BETWEEN '2016-05-01' AND '2016-05-14' AND
+post_status = 'wc-processing'
+GROUP BY p.ID
+ORDER BY p.post_date DESC;
