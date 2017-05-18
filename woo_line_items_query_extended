@@ -1,0 +1,55 @@
+SELECT 
+o.id 'order_id',
+o.id 'order_number',
+o.post_date 'order_date',
+o.post_status 'status',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_fee_total') 'fee_total',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_fee_tax_total') 'fee_tax_total',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_order_tax') 'tax_total',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_cart_discount') 'discount_total',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_order_total') 'order_total',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_refunded_total') 'refunded_total',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_order_currency') 'order_currency',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_payment_method') 'payment_method',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_shipping_method') 'shipping_method',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_customer_id') 'customer_id',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_billing_first_name') 'billing_first_name',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_billing_last_name') 'billing_last_name',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_billing_company') 'billing_company',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_billing_email') 'billing_email',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_billing_phone') 'billing_phone',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_billing_address_1') 'billing_address_1',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_billing_address_2') 'billing_address_2',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_billing_postcode') 'billing_postcode',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_billing_city') 'billing_city',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_billing_state') 'billing_state',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_billing_country') 'billing_country',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_shipping_first_name') 'shipping_first_name',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_shipping_last_name') 'shipping_last_name',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_shipping_address_1') 'shipping_address_1',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_shipping_address_2') 'shipping_address_2',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_shipping_postcode') 'shipping_postcode',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_shipping_city') 'shipping_city',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_shipping_state') 'shipping_state',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_shipping_country') 'shipping_country',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_shipping_company') 'shipping_company',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_customer_note') 'customer_note',
+i.order_item_name 'item_name',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = (SELECT meta_value FROM wp_squi_woocommerce_order_itemmeta WHERE order_item_id = i.order_item_id AND meta_key = '_product_id') AND meta_key = '_sku') 'sku',
+(SELECT meta_value FROM wp_squi_woocommerce_order_itemmeta WHERE order_item_id = i.order_item_id AND meta_key = '_qty') 'item_quantity',
+(SELECT meta_value FROM wp_squi_woocommerce_order_itemmeta WHERE order_item_id = i.order_item_id AND meta_key = '_line_total') 'item_total',
+(SELECT meta_value FROM wp_squi_woocommerce_order_itemmeta WHERE order_item_id = i.order_item_id AND meta_key = '_line_tax') 'item_tax',
+(SELECT meta_value FROM wp_squi_woocommerce_order_itemmeta WHERE order_item_id = i.order_item_id AND meta_key = 'cost') 'shipping_items',
+(SELECT meta_value FROM wp_squi_woocommerce_order_itemmeta WHERE order_item_id = i.order_item_id AND meta_key = 'fee_items') 'fee_items',
+(SELECT meta_value FROM wp_squi_woocommerce_order_itemmeta WHERE order_item_id = i.order_item_id AND meta_key = 'tax_items') 'tax_items',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_coupon_title') 'coupons',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_purchase_note') 'order_notes',
+(SELECT meta_value FROM wp_squi_postmeta WHERE post_id = o.id AND meta_key = '_download_permissions_granted') 'download_permissions_granted'
+FROM wp_squi_posts o
+LEFT JOIN wp_squi_woocommerce_order_items i
+ON o.id = i.order_id
+WHERE o.post_type = 'shop_order' 
+AND i.order_item_type = 'line_item'
+AND o.post_status = 'wc-completed'
+AND o.post_date BETWEEN '2017-01-12 00:00:00 AM' AND '2017-01-13 00:00:00 AM'
+ORDER BY order_date, order_id;
